@@ -87,7 +87,12 @@ void yellow(std::string msg, bool newline = true) {
     std::cout << WHITE;
 }
 
+void lineBreak() {
+    yellow("#~#~#~#~#~#~#~#~#~#~#");
+}
+
 std::string optionInput(std::string prompt, std::list<std::string> options) {
+    lineBreak();
     while (true) {
         // Display available options
         blue("Options: [", false);
@@ -111,6 +116,7 @@ std::string optionInput(std::string prompt, std::list<std::string> options) {
         // Check if user's input is a valid choice
         for (std::string option : options) {
             if (choice == option) {
+                lineBreak();
                 return choice;
             }
         }
@@ -122,8 +128,8 @@ std::string randomChoice(std::list<std::string> options) {
     // RANDOM SEED
     std::random_device seed;
     // MERSENNE TWISTER
-    std::mt19937 mt(seed);
-    // List that contains index/position for all elements
+    std::mt19937 mt(seed());
+    // Distribution that contains index/position for all elements
     std::uniform_int_distribution<int> randIndex(0, options.size() - 1);
     // Get a random number from the list
     int generatedIndex = randIndex(mt);
@@ -139,7 +145,7 @@ std::string randomChoice(std::list<std::string> options) {
 }
 
 // Rock Paper Scissors
-int rps() {
+void rps() {
     // Display Introduction Message
     print(
         "Welcome to rock paper scissors.\n"
@@ -148,7 +154,7 @@ int rps() {
         "and scissors beats rock.\n"
         "You will be playing Barbable"
         " from Liechtenstein!\n"
-        "First to 3 points wins!\n"
+        "First to 3 points wins!"
     );
 
     // Initialize user points
@@ -218,7 +224,7 @@ int rps() {
                 programPoints += 1;
             }
         } else if (userPick == "SCISSORS") {
-            // Rock draws with Rock
+            // Scissors loses to Rock
             if (programPick == "ROCK") {
                 print("LOSS!");
                 programPoints += 1;
@@ -229,7 +235,127 @@ int rps() {
                 print("DRAW!");
             }
         }
+
+        // End the game once program reaches 3 points
+        if (programPoints >= 3) {
+            purple("You lost the set!");
+            purple("Barbable spits in your face!");
+            break;
+        }
+
+        // Display the score
+        // at the end of every round
+        std::cout << "Your points: " << userPoints;
+        std::cout << std::endl;
+        std::cout << "Barbable's points: " << programPoints;
+        std::cout << std::endl;
     }
+}
+
+// Coin Flipping Game
+void coinFlip() {
+    // Get user's guess for whether a coin will result in
+    // "HEADS" or "TAILS"
+    std::string guess = optionInput("Heads/Tails? ", {"HEADS", "TAILS"});
+
+    if (guess == "HEADS") {
+        // If the user guessed "HEADS", the result is "TAILS"
+        purple("The coin was tails, unfortunately.");
+    } else /* If guess is not "HEADS", it must be "TAILS" */ {
+        // If the user guessed "TAILS", the result is "HEADS"
+        purple("The coin was heads, unfortunately.");
+    }
+}
+
+// Number Guessing Game
+void numGuess() {
+    // Get the user's guess as a string
+    std::string userInput;
+    cyan("Enter a number (0-9): ", false);
+    std::getline(std::cin, userInput);
+
+    try {
+        // # Convert the user's guess to an integer
+        int userNum = std::stoi(userInput);
+
+        // Check if user's guess is within the guessing boundaries
+        if (0 <= userNum && userNum <= 9) {
+            // Generate a random number between 0 and 9,
+            // excluding the user's guess
+            // RANDOM SEED
+            std::random_device seed;
+            // MERSENNE TWISTER
+            std::mt19937 mt(seed());
+            // Distribution that contains numbers from 1 to 9
+            std::uniform_int_distribution<int> randOffset(1, 9);
+            // Generate the number
+            int correctNum = (userNum + randOffset(mt)) % 10;
+
+            // Tell the user that they guessed wrong
+            // Also tell them the correct answer
+            purple("Wrong the correct answer was ", false);
+            purple(std::to_string(correctNum) + ".");
+        } else {
+            purple("Wrong! Hint: The number is between 0 and 9");
+        }
+    } catch (std::invalid_argument) {
+        // Tell the user that their input wasn't an integer
+        red(userInput, false);
+        red(" is not an integer.");
+    }
+}
+
+void hangman() {
+    /*    
+    # List of 3-letter words
+    # Carefully engineered so that no sequence of 5 characters
+    # will empty out the list
+    */
+    std::list<std::string> wordList = {
+        "BAT",
+        "BAR",
+        "BTW",
+        "BAN",
+        "BIN",
+        "CAR",
+        "CAT",
+        "CAP",
+        "CAN",
+        "DOG",
+        "FAN",
+        "FAT",
+        "FIN",
+        "FUN",
+        "GAP",
+        "GUN",
+        "HUT",
+        "HMM",
+        "JET",
+        "JOB",
+        "JOY",
+        "KIT",
+        "LOG",
+        "MAN",
+        "MAP",
+        "NAP",
+        "NET",
+        "PEN",
+        "PET",
+        "PIN",
+        "POT",
+        "PRY",
+        "RAT",
+        "SUN",
+        "SPY",
+        "SSH",
+        "VAN",
+        "WIT",
+        "WHY",
+        "YES",
+        "ZAP",
+    };
+
+    
 }
 
 int main() {
@@ -247,8 +373,17 @@ int main() {
 
         // Take the user to the game they want to play
         if (selectedGame == "RPS") {
-            // ROCK PAPER SCISSORS
+            // Rock Paper Scissors
             rps();
+        } else if (selectedGame == "COIN") {
+            // Coin Flipping Game
+            coinFlip();
+        } else if (selectedGame == "NUMBER") {
+            // Number Guessing Game
+            numGuess();
+        } else if (selectedGame == "HANGMAN") {
+            // Hangman Game
+            hangman();
         } else if (selectedGame == "EXIT") {
             // Provide the user with factual knowledge
             // \u0025 is the unicode sequence for "%"
