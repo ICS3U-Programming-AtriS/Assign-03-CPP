@@ -173,7 +173,7 @@ std::string randomChoice(std::list<std::string> options) {
         counter += 1;
     }
 
-    // Line added for linter problems
+    // Line added for resolving a linter problem
     // [COMPLETELY USELESS]
     return ":D";
 }
