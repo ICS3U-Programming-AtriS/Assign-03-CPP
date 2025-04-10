@@ -128,7 +128,7 @@ std::string optionInput(std::string prompt, std::list<std::string> options) {
         blue("Options: [", false);
         int counter = 1;
         for (std::string option : options) {
-            blue('"'+option+'"', false);
+            blue("'" + option + "'", false);
             if (counter < options.size()) {
                 blue(", ", false);
             }
@@ -154,6 +154,7 @@ std::string optionInput(std::string prompt, std::list<std::string> options) {
     }
 }
 
+// Function that gets a random element out of a list
 std::string randomChoice(std::list<std::string> options) {
     // RANDOM SEED
     std::random_device seed;
@@ -304,8 +305,15 @@ void numGuess() {
     std::getline(std::cin, userInput);
 
     try {
+        size_t pos;
         // # Convert the user's guess to an integer
-        int userNum = std::stoi(userInput);
+        // pos will be equal to the length of the input converted
+        int userNum = std::stoi(userInput, &pos);
+
+        // REFUSE FLOATS
+        if (pos != userInput.length()) {
+            throw std::invalid_argument("NO FLOATS");
+        }
 
         // Check if user's guess is within the guessing boundaries
         if (0 <= userNum && userNum <= 9) {
@@ -428,7 +436,7 @@ void hangman() {
 
         // Get a letter from the user
         std::string guess = optionInput("Enter a letter: ", remainingOptions);
-        //  Add the user's guessed letter to the list of guesses
+        // Add the user's guessed letter to the list of guesses
         guessedLetters.push_back(guess);
         /*
         At the end of every round:
