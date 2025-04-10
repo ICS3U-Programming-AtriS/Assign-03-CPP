@@ -12,16 +12,45 @@
 #include <random>
 
 // Terminal color sequences
-const std::string RED = "\033[0;31m";     // Red
-const std::string YELLOW = "\033[0;33m";  // Yellow
-const std::string BLUE = "\033[0;34m";    // Blue
-const std::string PURPLE = "\033[0;35m";  // Purple
-const std::string CYAN = "\033[0;36m";    // Cyan
-const std::string WHITE = "\033[0;37m";   // White (default)
+const char RED[] = "\033[0;31m";     // Red
+const char YELLOW[] = "\033[0;33m";  // Yellow
+const char BLUE[] = "\033[0;34m";    // Blue
+const char PURPLE[] = "\033[0;35m";  // Purple
+const char CYAN[] = "\033[0;36m";      // Cyan
+const char WHITE[] = "\033[0;37m";     // White (default)
 
+// LIST OF ALL LETTERS
+const std::list<std::string> ALPHABET_LIST = {
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
+};
 
-
-
+// Used for streamlining the process
+// Of converting my python code to c++
 void print(std::string msg) {
     std::cout << msg;
     printf("\n");
@@ -87,6 +116,7 @@ void yellow(std::string msg, bool newline = true) {
     std::cout << WHITE;
 }
 
+// Prints a string that divides the terminal output
 void lineBreak() {
     yellow("#~#~#~#~#~#~#~#~#~#~#");
 }
@@ -154,8 +184,7 @@ void rps() {
         "and scissors beats rock.\n"
         "You will be playing Barbable"
         " from Liechtenstein!\n"
-        "First to 3 points wins!"
-    );
+        "First to 3 points wins!");
 
     // Initialize user points
     int userPoints = 0;
@@ -180,13 +209,10 @@ void rps() {
             if (userPick == "ROCK") {
                 // program pick is now either "ROCK" or "PAPER"
                 programPick = randomChoice({"ROCK", "PAPER"});
-            }
-            else if (userPick == "PAPER") {
+            } else if (userPick == "PAPER") {
                 // program pick is now either "PAPER" or "SCISSORS"
                 programPick = randomChoice({ "PAPER", "SCISSORS" });
-            }
-            // If it's not ROCK or PAPER, it must be SCISSORS;
-            else {
+            } else /*If it's not ROCK or PAPER, it must be SCISSORS*/ {
                 // program pick is now either "SCISSORS" or "ROCK"
                 programPick = randomChoice({ "SCISSORS", "ROCK" });
             }
@@ -207,19 +233,18 @@ void rps() {
             } else if (programPick == "PAPER") {
                 print("LOSS!");
                 programPoints += 1;
-            } else {
+            } else /*If it's not ROCK or PAPER, it must be SCISSORS*/ {
                 print("WIN!");
                 userPoints += 1;
             }
-        }
-        else if (userPick == "PAPER") {
+        } else if (userPick == "PAPER") {
             // Paper beats Rock
             if (programPick == "ROCK") {
                 print("WIN!");
                 userPoints += 1;
             } else if (programPick == "PAPER") {
                 print("DRAW!");
-            } else {
+            } else /*If it's not ROCK or PAPER, it must be SCISSORS*/ {
                 print("LOSS!");
                 programPoints += 1;
             }
@@ -231,7 +256,7 @@ void rps() {
             } else if (programPick == "PAPER") {
                 print("WIN!");
                 userPoints += 1;
-            } else {
+            } else /*If it's not ROCK or PAPER, it must be SCISSORS*/ {
                 print("DRAW!");
             }
         }
@@ -305,12 +330,11 @@ void numGuess() {
     }
 }
 
+// HANGMAN GAME
 void hangman() {
-    /*    
-    # List of 3-letter words
-    # Carefully engineered so that no sequence of 5 characters
-    # will empty out the list
-    */
+    // List of 3-letter words
+    // Carefully engineered so that no sequence of 5 characters
+    // will empty out the list
     std::list<std::string> wordList = {
         "BAT",
         "BAR",
@@ -355,7 +379,75 @@ void hangman() {
         "ZAP",
     };
 
-    
+    // Initialize a list to contain the guessed letters
+    std::list<std::string> guessedLetters = {};
+
+    // Guessing Loop
+    for (int i = 5; i > 0; i--) {
+        // Print amount of of lives
+        print("You have " + std::to_string(i) + " lives left");
+        // Shows all previously guessed letters
+        printf("Guessed letters : ");
+        int counter = 1;
+        for (std::string letter : guessedLetters) {
+            std::cout << letter;
+            if (counter < guessedLetters.size()) {
+                std::cout << " ";
+            }
+            counter += 1;
+        }
+        std::cout << std::endl;
+        // This message will always stay the same
+        print("Word [3 letters left] : _ _ _");
+
+        // Filter out guessed letters from ALPHABET_LIST
+        // Basically remainingOptions will become a list
+        // of every letter except the ones that the user guessed
+        std::list<std::string> remainingOptions;
+        for (std::string letter : ALPHABET_LIST) {
+            // Check if letter is not in guessedLetters
+            bool isAvailable = true;
+            for (std::string guessedLetter : guessedLetters) {
+                if (letter == guessedLetter) {
+                    // Set letter to Not Available
+                    // If it is within guessedLetters
+                    isAvailable = false;
+                }
+            }
+            // If letter is available,
+            // Add it to remainingOptions
+            if (isAvailable) {
+                // Append letter to the front of the list
+                remainingOptions.push_back(letter);
+            }
+        }
+
+        // Get a letter from the user
+        std::string guess = optionInput("Enter a letter: ", remainingOptions);
+        //  Add the user's guessed letter to the list of guesses
+        guessedLetters.push_back(guess);
+        /*
+        At the end of every round:
+        Remove all words from the word list,
+        that contain the user's guessed letter
+        */
+        // Lambda function that checks if guess is in word
+        auto guessInWord = [guess](std::string word) {
+            return (word.find(guess) != std::string::npos);
+        };
+        // Removes all words from list containing a guessed letter
+        wordList.remove_if(guessInWord);
+
+        // Tell the user that they guessed wrong
+        print("Unfortunately, you guessed wrong! You lose a life!");
+    }
+
+    // Tell the user they lost
+    purple("You ran out of lives!");
+    // Use a random word from the surviving word list
+    // as the correct word
+    purple("The correct word was ", false);
+    purple(randomChoice(wordList) + ".");
 }
 
 int main() {
@@ -363,13 +455,21 @@ int main() {
     print("Welcome to THE CASINO!");
 
     // List of available games
-    std::list<std::string> gameList = {"RPS", "COIN", "NUMBER", "HANGMAN", "EXIT"};
+    std::list<std::string> gameList = {
+        "RPS",
+        "COIN",
+        "NUMBER",
+        "HANGMAN",
+        "EXIT"
+    };
 
     // Game Selection Loop
     while (true) {
         // Ask user what game they want to play
         std::string selectedGame;
-        selectedGame = optionInput("What Game do you want to play?: ", gameList);
+        selectedGame = optionInput(
+            "What Game do you want to play?: ",
+             gameList);
 
         // Take the user to the game they want to play
         if (selectedGame == "RPS") {
@@ -393,5 +493,4 @@ int main() {
             break;
         }
     }
-
 }
