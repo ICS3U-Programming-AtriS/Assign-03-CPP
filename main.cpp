@@ -306,7 +306,7 @@ void numGuess() {
 
     try {
         size_t pos;
-        // # Convert the user's guess to an integer
+        // Convert the user's guess to an integer
         // pos will be equal to the length of the input converted
         int userNum = std::stoi(userInput, &pos);
 
