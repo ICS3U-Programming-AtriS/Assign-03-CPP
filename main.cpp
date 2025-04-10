@@ -172,6 +172,10 @@ std::string randomChoice(std::list<std::string> options) {
         }
         counter += 1;
     }
+
+    // Line added for linter problems
+    // [COMPLETELY USELESS]
+    return ":D";
 }
 
 // Rock Paper Scissors
