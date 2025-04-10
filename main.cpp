@@ -463,7 +463,7 @@ void hangman() {
 }
 
 int main() {
-    // Introduction msg
+    // Introduction message
     print("Welcome to THE CASINO!");
 
     // List of available games
