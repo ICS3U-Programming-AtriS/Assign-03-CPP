@@ -449,7 +449,6 @@ void hangman() {
         };
         // Removes all words from list containing a guessed letter
         wordList.remove_if(guessInWord);
-
         // Tell the user that they guessed wrong
         print("Unfortunately, you guessed wrong! You lose a life!");
     }
